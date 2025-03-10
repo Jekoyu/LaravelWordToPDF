@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Exception;
@@ -33,7 +34,7 @@ class DocumentController extends Controller
             Carbon::setLocale('id');
             $asesi = $request->asesi;
             $asesor = $request->asesor;
-            $tanggal = Carbon::now()->translatedFormat('d F Y');
+            $tanggal = null; //Carbon::now()->translatedFormat('d F Y');
             Log::info("Memproses template Word untuk Asesi: $asesi, Asesor: $asesor, Tanggal: $tanggal");
 
             // 1. Load Template Word
@@ -46,9 +47,9 @@ class DocumentController extends Controller
             $outputPath = storage_path('app/temp/document_filled_' . uniqid() . '.docx');
 
             $templateProcessor = new TemplateProcessor($templatePath);
-            $templateProcessor->setValue('nama_asesi', $asesi);
-            $templateProcessor->setValue('nama_asesor', $asesor);
-            $templateProcessor->setValue('tanggal', $tanggal);
+            $templateProcessor->setValue('nama_asesi', !empty($asesi) ? $asesi : " ");
+            $templateProcessor->setValue('nama_asesor', !empty($asesor) ? $asesor : " ");
+            $templateProcessor->setValue('tanggal', !empty($tanggal) ? $tanggal : " ");
             $templateProcessor->saveAs($outputPath);
 
             Log::info("Dokumen Word berhasil diproses: " . $outputPath);
